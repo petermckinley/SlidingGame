@@ -12,6 +12,7 @@ public:
     void cleanUp();
     void clear();
     void render(Entity& p_ent);
+    void render(StaticEntity& p_ent);
     void display();
 
 private:

@@ -33,6 +33,50 @@ void RenderWindow::clear() {
     SDL_RenderClear(renderer);
 }
 
+void RenderWindow::render(StaticEntity& s_ent) {
+    b2Body* body = s_ent.getBody();
+    if (body == nullptr) {
+        return; // Skip rendering if there's no body
+    }
+
+    b2Vec2 position = body->GetPosition();
+    SDL_Texture* texture = s_ent.getTexture();
+    float width = s_ent.getWidth();
+    float height = s_ent.getHeight();
+
+    if (texture == nullptr) {
+        std::cout << "No texture provided for static entity" << std::endl;
+        return; // Skip rendering if there's no texture
+    }
+
+    SDL_FRect src;
+    src.x = 0;
+    src.y = 0;
+
+    SDL_PropertiesID textureProperties = SDL_GetTextureProperties(texture);
+    if (textureProperties == 0) {
+        std::cerr << "Error getting texture properties: " << SDL_GetError() << std::endl;
+        return;
+    }
+
+    float textureWidth, textureHeight;
+    if (!SDL_GetTextureSize(texture, &textureWidth, &textureHeight)) {
+        std::cerr << "Error getting texture dimensions: " << SDL_GetError() << std::endl;
+        return; 
+    }
+
+    src.w = textureWidth;
+    src.h = textureHeight;
+
+    SDL_FRect dst;
+    dst.x = position.x * RFACTOR - (width * RFACTOR / 2);
+    dst.y = position.y * RFACTOR - (height * RFACTOR / 2);
+    dst.w = width * RFACTOR;
+    dst.h = height * RFACTOR;
+
+    SDL_RenderTexture(renderer, texture, &src, &dst);
+}
+
 void RenderWindow::render(Entity& p_ent) {
     b2Body* body = p_ent.getBody();
     if (body == nullptr) {
