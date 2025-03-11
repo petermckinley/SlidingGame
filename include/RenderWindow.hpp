@@ -4,6 +4,7 @@
 #include <SDL3/SDL.h>
 #include <SDL3/SDL_image.h>
 #include "Entity.hpp"
+#include "DraggableEntity.hpp"
 
 class RenderWindow {
 public:
@@ -13,6 +14,7 @@ public:
     void clear();
     void render(Entity& p_ent);
     void render(StaticEntity& p_ent);
+    void render(DraggableEntity& p_ent, bool isDragging, b2Vec2 offset);
     void display();
 
 private:

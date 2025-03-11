@@ -33,6 +33,58 @@ void RenderWindow::clear() {
     SDL_RenderClear(renderer);
 }
 
+void RenderWindow::render(DraggableEntity& p_ent, bool isDragging, b2Vec2 offset) {
+    b2Body* body = p_ent.getBody();
+    if (body == nullptr) {
+        return; // Skip rendering if there's no body
+    }
+
+    b2Vec2 position = body->GetPosition();
+    float angle = body->GetAngle();
+
+    // If the entity is being dragged, adjust its position by the offset
+    if (isDragging) {
+        position += offset;  // Apply the offset to the position
+    }
+
+    SDL_Texture* texture = p_ent.getTexture();
+    float width = p_ent.getWidth();
+    float height = p_ent.getHeight();
+
+    if (texture == nullptr) {
+        std::cout << "No texture provided" << std::endl;
+        return;
+    }
+
+    SDL_FRect src;
+    src.x = 0;
+    src.y = 0;
+
+    SDL_PropertiesID textureProperties = SDL_GetTextureProperties(texture);
+    if (textureProperties == 0) {
+        std::cerr << "Error getting texture properties: " << SDL_GetError() << std::endl;
+        return;
+    }
+
+    float textureWidth, textureHeight;
+    if (!SDL_GetTextureSize(texture, &textureWidth, &textureHeight)) {
+        std::cerr << "Error getting texture dimensions: " << SDL_GetError() << std::endl;
+        return;
+    }
+
+    src.w = textureWidth;
+    src.h = textureHeight;
+
+    SDL_FRect dst;
+    dst.x = position.x * RFACTOR - (width * RFACTOR / 2);
+    dst.y = position.y * RFACTOR - (height * RFACTOR / 2);
+    dst.w = width * RFACTOR;
+    dst.h = height * RFACTOR;
+
+    SDL_RenderTextureRotated(renderer, texture, &src, &dst, angle * 180.0f / b2_pi, NULL, SDL_FLIP_NONE);
+}
+
+
 void RenderWindow::render(StaticEntity& s_ent) {
     b2Body* body = s_ent.getBody();
     if (body == nullptr) {
