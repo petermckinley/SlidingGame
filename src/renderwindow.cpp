@@ -84,7 +84,6 @@ void RenderWindow::render(DraggableEntity& p_ent, bool isDragging, b2Vec2 offset
     SDL_RenderTextureRotated(renderer, texture, &src, &dst, angle * 180.0f / b2_pi, NULL, SDL_FLIP_NONE);
 }
 
-
 void RenderWindow::render(StaticEntity& s_ent) {
     b2Body* body = s_ent.getBody();
     if (body == nullptr) {
@@ -101,32 +100,46 @@ void RenderWindow::render(StaticEntity& s_ent) {
         return; // Skip rendering if there's no texture
     }
 
-    SDL_FRect src;
-    src.x = 0;
-    src.y = 0;
-
-    SDL_PropertiesID textureProperties = SDL_GetTextureProperties(texture);
-    if (textureProperties == 0) {
-        std::cerr << "Error getting texture properties: " << SDL_GetError() << std::endl;
-        return;
-    }
-
     float textureWidth, textureHeight;
-    if (!SDL_GetTextureSize(texture, &textureWidth, &textureHeight)) {
-        std::cerr << "Error getting texture dimensions: " << SDL_GetError() << std::endl;
-        return; 
+    SDL_GetTextureSize(texture, &textureWidth, &textureHeight);
+
+    float dstX = position.x * RFACTOR - (width * RFACTOR / 2);
+    float dstY = position.y * RFACTOR - (height * RFACTOR / 2);
+    float dstW = width * RFACTOR;
+    float dstH = height * RFACTOR;
+
+    // Calculate the number of tiles needed in each direction
+    int tilesX = static_cast<int>(ceil(dstW / textureWidth));
+    int tilesY = static_cast<int>(ceil(dstH / textureHeight));
+
+    for (int y = 0; y < tilesY; ++y) {
+        for (int x = 0; x < tilesX; ++x) {
+            SDL_FRect src;
+            src.x = 0;
+            src.y = 0;
+            src.w = static_cast<float>(textureWidth);
+            src.h = static_cast<float>(textureHeight);
+
+            SDL_FRect dst;
+            dst.x = dstX + x * textureWidth;
+            dst.y = dstY + y * textureHeight;
+            dst.w = static_cast<float>(textureWidth);
+            dst.h = static_cast<float>(textureHeight);
+
+            // Handle the last tile in each direction to avoid stretching
+            if (dst.x + dst.w > dstX + dstW) {
+                dst.w = dstX + dstW - dst.x;
+                src.w = dst.w; // adjust src to match displayed area
+            }
+
+            if (dst.y + dst.h > dstY + dstH) {
+                dst.h = dstY + dstH - dst.y;
+                src.h = dst.h; // adjust src to match displayed area
+            }
+
+            SDL_RenderTexture(renderer, texture, &src, &dst);
+        }
     }
-
-    src.w = textureWidth;
-    src.h = textureHeight;
-
-    SDL_FRect dst;
-    dst.x = position.x * RFACTOR - (width * RFACTOR / 2);
-    dst.y = position.y * RFACTOR - (height * RFACTOR / 2);
-    dst.w = width * RFACTOR;
-    dst.h = height * RFACTOR;
-
-    SDL_RenderTexture(renderer, texture, &src, &dst);
 }
 
 void RenderWindow::render(Entity& p_ent) {

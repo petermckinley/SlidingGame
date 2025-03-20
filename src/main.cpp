@@ -14,27 +14,43 @@
 #define WINDOW_HEIGHT (1020)
 #define WINDOW_WIDTH  (1580)
 RenderWindow window("GAME v1.0", WINDOW_WIDTH, WINDOW_HEIGHT);
+
 b2World* gameWorld;
 b2World* menuWorld;
 b2World* settingsWorld;
+b2World* Currworld;
+Entity* player = nullptr;
+
 
 std::vector<DraggableEntity*> Dents;
 std::vector<Entity> entities;
 std::vector<StaticEntity*> Sents;
 
 SDL_Texture* grassTexture;
-SDL_Texture* bugTexture;
+SDL_Texture* bugTexture = window.loadTexture("../src/res/pixil-frame-0.png");
+SDL_Texture* startTexture = window.loadTexture("../src/res/pxArt.png");
 
 const float timestep = 1.0f / 60.0f;
 const int velocityIterations = 6;
 const int positionIterations = 2;
+
+b2Vec2 localClickPoint;
+
+void changeWorld(){
+    Sents.clear();
+    Dents.clear();
+    entities.clear();
+    if(player) {
+        delete player;
+        player = nullptr;
+    }
+}
 
 bool initialize(){
     if (!SDL_Init(SDL_INIT_VIDEO)) {
         std::cout << "HEY.. SDL_Init HAS FAILED. SDL_ERROR: " << SDL_GetError() << std::endl;
         return true;
     }
-    bugTexture = window.loadTexture("../src/res/pixil-frame-0.png");
     grassTexture = window.loadTexture("../src/res/ground_grass_1.png");
     return false;
 }
@@ -67,7 +83,7 @@ void applyMouseForce(b2Body* selectedBody, b2Vec2 mouseOffset){
     selectedBody->ApplyForceToCenter(force, true);
 }
 
-void handleEvents(SDL_Event& event, bool& gameRunning, b2World* world, b2Body*& selectedBody, b2Vec2& mouseOffset, Entity& player, std::vector<DraggableEntity*>& draggableEntities) {
+void handleEvents(SDL_Event& event, bool& gameRunning, b2World* world, b2Body*& selectedBody, b2Vec2& mouseOffset, std::vector<DraggableEntity*>& draggableEntities) {
     while (SDL_PollEvent(&event)) {
         if (event.type == SDL_EVENT_QUIT) {
             gameRunning = false;
@@ -77,6 +93,7 @@ void handleEvents(SDL_Event& event, bool& gameRunning, b2World* world, b2Body*& 
             SDL_GetMouseState(&mouseX, &mouseY);
             
             b2Vec2 mousePos(mouseX / RFACTOR, mouseY / RFACTOR);
+            std::cout << mousePos.x << " " << mousePos.y << std::endl;
 
             for (DraggableEntity* d : draggableEntities) {
                 b2Body* body = d->getBody();
@@ -84,10 +101,17 @@ void handleEvents(SDL_Event& event, bool& gameRunning, b2World* world, b2Body*& 
                     for (b2Fixture* f = body->GetFixtureList(); f; f = f->GetNext()) {
                         if (f->GetShape()->TestPoint(body->GetTransform(), mousePos)) {
                             selectedBody = body;
-                            mouseOffset = selectedBody->GetPosition() - mousePos;
+
+                            // Convert mousePos to local coordinates
+                            b2Transform bodyTransform = body->GetTransform();
+                            bodyTransform.q.c = -bodyTransform.q.c;
+                            bodyTransform.q.s = bodyTransform.q.s;
+                            b2Vec2 localMousePos = b2MulT(bodyTransform, mousePos);
+
+                            localClickPoint = localMousePos; // Store the local click point
                             selectedBody = d->grab();
                             std::cout << "Object found!" << std::endl;
-                            applyMouseForce(selectedBody, mouseOffset);
+                            applyMouseForce(selectedBody, localClickPoint); // Pass localClickPoint
                             break;
                         }
                     }
@@ -110,13 +134,13 @@ void handleEvents(SDL_Event& event, bool& gameRunning, b2World* world, b2Body*& 
         else if (event.type == SDL_EVENT_KEY_DOWN) {
             switch (event.key.key) {
                 case SDLK_LEFT:
-                    player.applyVelocityChange(b2Vec2(-3.0f, 0.0f));
+                    player->applyVelocityChange(b2Vec2(-3.0f, 0.0f));
                     break;
                 case SDLK_RIGHT:
-                    player.applyVelocityChange(b2Vec2(3.0f, 0.0f));
+                    player->applyVelocityChange(b2Vec2(3.0f, 0.0f));
                     break;
                 case SDLK_UP:
-                    player.applyVelocityChange(b2Vec2(0.0f, -75.0f));
+                    player->applyVelocityChange(b2Vec2(0.0f, -75.0f));
                     break;
                 case SDLK_ESCAPE:
                     gameRunning = false;
@@ -129,14 +153,33 @@ void handleEvents(SDL_Event& event, bool& gameRunning, b2World* world, b2Body*& 
     }
 }
 
+b2World* generateMenu(RenderWindow& window){
+    changeWorld();
+    b2Vec2 gravity(0.0f, 90.8f);
+    b2World* world = new b2World(gravity);
+    
+    //world 197.5 wide, 127.5 tall
+    Sents.emplace_back(new StaticEntity(*world, 98.5, 110, grassTexture, 170, 10));
+    Sents.emplace_back(new StaticEntity(*world, 15, 70, grassTexture, 10, 90));
+    Sents.emplace_back(new StaticEntity(*world, 180, 70, grassTexture, 10, 90));
+
+    entities.emplace_back(*world, 70, 60, startTexture, 20, 10);
+    Dents.emplace_back(new DraggableEntity(*world, 80, 70, grassTexture, 10, 10));
+    Dents.emplace_back(new DraggableEntity(*world, 60, 70, grassTexture, 10, 10));
+    
+
+    return world;
+}
+
 b2World* generateLevelOne(std::vector<Entity>& Ents, std::vector<StaticEntity*>& StaticEnts, std::vector<DraggableEntity*>& DraggableEnts, RenderWindow& window) {
+    changeWorld();
     b2Vec2 gravity(0.0f, 90.8f);
     b2World* world = new b2World(gravity);
 
     grassTexture = window.loadTexture("../src/res/ground_grass_1.png");
 
-    //StaticEnts.emplace_back(new StaticEntity(*world, 0, WINDOW_HEIGHT / (6 * RFACTOR), grassTexture, WINDOW_WIDTH * 2 / RFACTOR, 20.0f));
-    //StaticEnts.emplace_back(new StaticEntity(*world, WINDOW_WIDTH / RFACTOR, 0, grassTexture, 10, WINDOW_HEIGHT / RFACTOR));
+    StaticEnts.emplace_back(new StaticEntity(*world, 0, WINDOW_HEIGHT / (6 * RFACTOR), grassTexture, WINDOW_WIDTH * 2 / RFACTOR, 20.0f));
+    StaticEnts.emplace_back(new StaticEntity(*world, WINDOW_WIDTH / RFACTOR, 0, grassTexture, 10, WINDOW_HEIGHT / RFACTOR));
     StaticEnts.emplace_back(new StaticEntity(*world, 0, WINDOW_HEIGHT * 6 / (8 * RFACTOR), grassTexture, WINDOW_WIDTH * 2 / RFACTOR, WINDOW_HEIGHT / (8 * RFACTOR)));
 
 
@@ -152,19 +195,17 @@ b2World* generateLevelOne(std::vector<Entity>& Ents, std::vector<StaticEntity*>&
     return world;
 }
 
-
 int main(int argc, char* args[]) {
     if (initialize()){
         std::cout << "bad error: end program" << std::endl;
         return 0;
     }
 
-    b2World* world;
-    world = generateLevelOne(entities, Sents, Dents, window);
+    Currworld = generateMenu(window);
+    //Currworld = generateLevelOne(entities, Sents, Dents, window);
 
-    Entity player (*world, 60.0f, 30.0f, bugTexture, 6.0f, 12.0f);
-    entities.emplace_back(player);
-
+    player = new Entity(*Currworld, 60.0f, 30.0f, bugTexture, 6.0f, 12.0f);
+    entities.emplace_back(*player);
     bool gameRunning = true;
     SDL_Event event;
 
@@ -172,8 +213,9 @@ int main(int argc, char* args[]) {
     b2Vec2 mouseOffset;
 
     while (gameRunning) {
-        handleEvents(event, gameRunning, world, selectedBody, mouseOffset, player, Dents);
-        world->Step(timestep, velocityIterations, positionIterations);
+        handleEvents(event, gameRunning, Currworld, selectedBody, mouseOffset, Dents);
+        //make teleporter to the center of world if peice falls off side
+        Currworld->Step(timestep, velocityIterations, positionIterations);
 
         window.clear();
         bool isDragging = (selectedBody != nullptr);
