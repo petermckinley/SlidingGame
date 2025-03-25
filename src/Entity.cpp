@@ -12,7 +12,6 @@ Entity::Entity(b2World& world, float x, float y, SDL_Texture* p_tex, float boxWi
 
     b2PolygonShape shape;
     shape.SetAsBox(boxWidth / 2.0f, boxHeight / 2.0f);
-
     b2FixtureDef fixtureDef;
     fixtureDef.shape = &shape;
     fixtureDef.density = 1.0f;
@@ -39,18 +38,18 @@ void Entity::update() {
     // Physics is handled by Box2D, no manual position updates needed
 }
 
-void Entity::applyVelocityChange(const b2Vec2& vel){
-	//TODO fix for mass related/ not needed for player?
-	if (body->GetLinearVelocity().x > maxVel) {
-		b2Vec2 temp = b2Vec2(0.95 * maxVel, body->GetLinearVelocity().y);
-		body->SetLinearVelocity(temp);
-		return;
-	} else if (body->GetLinearVelocity().x < maxVel * -1.0)	{
-		b2Vec2 temp = b2Vec2(-0.95 * maxVel, body->GetLinearVelocity().y);
-		body->SetLinearVelocity(temp);
-	}
-	
-	body->SetLinearVelocity(body->GetLinearVelocity() + vel);//  b2Vec2(1.0 / body->GetMass(), 1.0 / body->getMass()));
+void Entity::applyVelocityChange(const b2Vec2& vel) {
+    if (body->GetLinearVelocity().x > maxVel) {
+        b2Vec2 temp = b2Vec2(0.95 * maxVel, body->GetLinearVelocity().y);
+        body->SetLinearVelocity(temp);
+        return;
+    } else if (body->GetLinearVelocity().x < -maxVel) {
+        b2Vec2 temp = b2Vec2(-0.95 * maxVel, body->GetLinearVelocity().y);
+        body->SetLinearVelocity(temp);
+        return;
+    }
+
+    body->SetLinearVelocity(body->GetLinearVelocity() + vel);
 }
 
 SDL_Texture* Entity::get_Texture() {
@@ -59,4 +58,9 @@ SDL_Texture* Entity::get_Texture() {
 
 b2Body* Entity::getBody() {
     return body;
+}
+
+Entity::Entity(b2World& world, b2Body* playerBody, SDL_Texture* p_tex, float radius)
+    : tex(p_tex), boxWidth(radius * 2), boxHeight(radius * 2) {
+    body = playerBody;
 }

@@ -36,6 +36,27 @@ const int positionIterations = 2;
 
 b2Vec2 localClickPoint;
 
+void makePlayer(){
+    b2CircleShape playerShape;
+    playerShape.m_radius = 6.0f;
+
+    b2BodyDef playerBodyDef;
+    playerBodyDef.type = b2_dynamicBody;
+    playerBodyDef.position.Set(60.0f / RFACTOR, 30.0f / RFACTOR);
+    b2Body* playerBody = Currworld->CreateBody(&playerBodyDef);
+
+    b2FixtureDef playerFixtureDef;
+    playerFixtureDef.shape = &playerShape;
+    playerFixtureDef.density = 1.0f;
+    playerFixtureDef.friction = 0.5f;
+    playerFixtureDef.restitution = 0.2f;
+
+    playerBody->CreateFixture(&playerFixtureDef);
+
+    player = new Entity(*Currworld, playerBody, bugTexture, 6.0f);
+}
+
+
 void changeWorld(){
     Sents.clear();
     Dents.clear();
@@ -204,7 +225,7 @@ int main(int argc, char* args[]) {
     Currworld = generateMenu(window);
     //Currworld = generateLevelOne(entities, Sents, Dents, window);
 
-    player = new Entity(*Currworld, 60.0f, 30.0f, bugTexture, 6.0f, 12.0f);
+    makePlayer();
     entities.emplace_back(*player);
     bool gameRunning = true;
     SDL_Event event;

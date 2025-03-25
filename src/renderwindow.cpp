@@ -185,7 +185,16 @@ void RenderWindow::render(Entity& p_ent) {
     dst.w = width * RFACTOR;
     dst.h = height * RFACTOR;
 
-    SDL_RenderTextureRotated(renderer, texture, &src, &dst, angle * 180.0f / b2_pi, NULL, SDL_FLIP_NONE);
+    if (width == height) {
+        // If it's a circle, always render the texture upright
+        b2Vec2 velocity = body->GetLinearVelocity();
+
+        SDL_RenderTextureRotated(renderer, texture, &src, &dst, velocity.x / 4.0, NULL, SDL_FLIP_NONE);
+    } else {
+        // For non-circular entities, render as usual with the current rotation
+        SDL_RenderTextureRotated(renderer, texture, &src, &dst, angle * 180.0f / b2_pi, NULL, SDL_FLIP_NONE);
+    }
+    //SDL_RenderTextureRotated(renderer, texture, &src, &dst, angle * 180.0f / b2_pi, NULL, SDL_FLIP_NONE);
 
 }
 

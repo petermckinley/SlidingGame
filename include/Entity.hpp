@@ -10,6 +10,7 @@ public:
     Entity(b2World& world, float x, float y, SDL_Texture* p_tex, float boxWidth, float boxHeight);
     Entity(b2World& world, float x, float y, SDL_Texture* p_tex, float boxWidth, float boxHeight, b2Body* body);
     Entity(b2World& world, StaticEntity& staticBody);
+    Entity(b2World& world, b2Body* playerBody, SDL_Texture* p_tex, float radius);
     void applyForce(const b2Vec2& force);
     void applyVelocityChange(const b2Vec2& vel);
     void update();
