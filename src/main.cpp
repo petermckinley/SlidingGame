@@ -15,11 +15,27 @@
 #define WINDOW_WIDTH  (1580)
 RenderWindow window("GAME v1.0", WINDOW_WIDTH, WINDOW_HEIGHT);
 
+b2World* generateMenu(RenderWindow& window);
+b2World* generateLevelOne(RenderWindow& window);
+
+std::vector<b2World* (*)(RenderWindow&)> levels = {
+    generateMenu,
+    generateLevelOne
+};
+
 b2World* gameWorld;
 b2World* menuWorld;
 b2World* settingsWorld;
 b2World* Currworld;
 Entity* player = nullptr;
+
+bool gameRunning = true;
+SDL_Event event;
+b2Body* selectedBody = nullptr;
+b2Vec2 mouseOffset;
+
+int currentLevel = 0;
+int nextLevel = 0;
 
 
 std::vector<DraggableEntity*> Dents;
@@ -104,7 +120,7 @@ void applyMouseForce(b2Body* selectedBody, b2Vec2 mouseOffset){
     selectedBody->ApplyForceToCenter(force, true);
 }
 
-void handleEvents(SDL_Event& event, bool& gameRunning, b2World* world, b2Body*& selectedBody, b2Vec2& mouseOffset, std::vector<DraggableEntity*>& draggableEntities) {
+void handleEvents(std::vector<DraggableEntity*>& draggableEntities) {
     while (SDL_PollEvent(&event)) {
         if (event.type == SDL_EVENT_QUIT) {
             gameRunning = false;
@@ -164,6 +180,7 @@ void handleEvents(SDL_Event& event, bool& gameRunning, b2World* world, b2Body*& 
                     player->applyVelocityChange(b2Vec2(0.0f, -75.0f));
                     break;
                 case SDLK_ESCAPE:
+                    std::cout << "pressed";
                     gameRunning = false;
                     break;
                 default:
@@ -192,16 +209,16 @@ b2World* generateMenu(RenderWindow& window){
     return world;
 }
 
-b2World* generateLevelOne(std::vector<Entity>& Ents, std::vector<StaticEntity*>& StaticEnts, std::vector<DraggableEntity*>& DraggableEnts, RenderWindow& window) {
+b2World* generateLevelOne(RenderWindow& window) {
     changeWorld();
     b2Vec2 gravity(0.0f, 90.8f);
     b2World* world = new b2World(gravity);
 
     grassTexture = window.loadTexture("../src/res/ground_grass_1.png");
 
-    StaticEnts.emplace_back(new StaticEntity(*world, 0, WINDOW_HEIGHT / (6 * RFACTOR), grassTexture, WINDOW_WIDTH * 2 / RFACTOR, 20.0f));
-    StaticEnts.emplace_back(new StaticEntity(*world, WINDOW_WIDTH / RFACTOR, 0, grassTexture, 10, WINDOW_HEIGHT / RFACTOR));
-    StaticEnts.emplace_back(new StaticEntity(*world, 0, WINDOW_HEIGHT * 6 / (8 * RFACTOR), grassTexture, WINDOW_WIDTH * 2 / RFACTOR, WINDOW_HEIGHT / (8 * RFACTOR)));
+    Sents.emplace_back(new StaticEntity(*world, 0, WINDOW_HEIGHT / (6 * RFACTOR), grassTexture, WINDOW_WIDTH * 2 / RFACTOR, 20.0f));
+    Sents.emplace_back(new StaticEntity(*world, WINDOW_WIDTH / RFACTOR, 0, grassTexture, 10, WINDOW_HEIGHT / RFACTOR));
+    Sents.emplace_back(new StaticEntity(*world, 0, WINDOW_HEIGHT * 6 / (8 * RFACTOR), grassTexture, WINDOW_WIDTH * 2 / RFACTOR, WINDOW_HEIGHT / (8 * RFACTOR)));
 
 
     //Ents.emplace_back(*world, 100.0f, 3.0f, grassTexture, 3.0f, 3.0f);
@@ -209,11 +226,58 @@ b2World* generateLevelOne(std::vector<Entity>& Ents, std::vector<StaticEntity*>&
     //Ents.emplace_back(*world, 3.0f, 10.0f, grassTexture, 3.0f, 3.0f);
     //Ents.emplace_back(*world, 10.0f, 10.0f, grassTexture, 3.0f, 3.0f);
 
-    DraggableEnts.emplace_back(new DraggableEntity(*world, 100.0f, 50.0f, grassTexture, 4.0f, 4.0f));
-    DraggableEnts.emplace_back(new DraggableEntity(*world, 100.0f, 25.0f, grassTexture, 4.0f, 4.0f));
-    DraggableEnts.emplace_back(new DraggableEntity(*world, 100.0f, 10.0f, grassTexture, 4.0f, 4.0f));
+    Dents.emplace_back(new DraggableEntity(*world, 100.0f, 50.0f, grassTexture, 4.0f, 4.0f));
+    Dents.emplace_back(new DraggableEntity(*world, 100.0f, 25.0f, grassTexture, 4.0f, 4.0f));
+    Dents.emplace_back(new DraggableEntity(*world, 100.0f, 10.0f, grassTexture, 4.0f, 4.0f));
 
     return world;
+}
+
+void getCurrentLevel(){
+    if (currentLevel == 0){
+        if (true){
+            return;
+        }
+    }
+    
+    return;
+}
+
+void gameloop(){
+    getCurrentLevel();//goes to indiviaul level data and checks if level is over
+    handleEvents(Dents);
+    //make teleporter to the center of world if peice falls off side
+    Currworld->Step(timestep, velocityIterations, positionIterations);
+
+    window.clear();
+    bool isDragging = (selectedBody != nullptr);
+    b2Vec2 offset = (isDragging && selectedBody) ? mouseOffset : b2Vec2(0, 0);
+
+    for (DraggableEntity* e : Dents) {
+        window.render(*e, isDragging, offset);
+    }
+    for (Entity& e : entities) {
+        window.render(e);
+    }
+    for (StaticEntity* e : Sents){
+        window.render(*e);
+    }
+    window.display();
+}
+
+void run_menu(RenderWindow& window) {
+    changeWorld();
+    Currworld = levels[0](window); // Call generateMenu
+    makePlayer();
+    entities.emplace_back(*player);
+
+    while (gameRunning) {
+        gameloop();
+
+        if (currentLevel != nextLevel) {
+            Currworld = levels[nextLevel](window);
+        }
+    }
 }
 
 int main(int argc, char* args[]) {
@@ -227,31 +291,9 @@ int main(int argc, char* args[]) {
 
     makePlayer();
     entities.emplace_back(*player);
-    bool gameRunning = true;
-    SDL_Event event;
-
-    b2Body* selectedBody = nullptr;
-    b2Vec2 mouseOffset;
 
     while (gameRunning) {
-        handleEvents(event, gameRunning, Currworld, selectedBody, mouseOffset, Dents);
-        //make teleporter to the center of world if peice falls off side
-        Currworld->Step(timestep, velocityIterations, positionIterations);
-
-        window.clear();
-        bool isDragging = (selectedBody != nullptr);
-        b2Vec2 offset = (isDragging && selectedBody) ? mouseOffset : b2Vec2(0, 0);
-
-        for (DraggableEntity* e : Dents) {
-            window.render(*e, isDragging, offset);
-        }
-        for (Entity& e : entities) {
-            window.render(e);
-        }
-        for (StaticEntity* e : Sents){
-            window.render(*e);
-        }
-        window.display();
+        run_menu(window);
     }
 
     window.cleanUp();
