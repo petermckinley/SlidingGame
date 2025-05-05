@@ -23,7 +23,7 @@ Use keyboard inputs to move blocks.
 Objective: Rearrange blocks to reach a specific end-state.
 
 Screenshots:
-
+![Image](https://github.com/user-attachments/assets/d0cba9d6-5705-4d6d-b03a-2bfb0d0924e3)
 
 Features:
 
