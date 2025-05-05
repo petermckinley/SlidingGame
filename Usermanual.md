@@ -59,6 +59,14 @@
 
 ---
 
+## Controls
+
+- Arrow keys or WASD: Move the player
+- Mouse (click and drag): Move draggable blocks
+- R: Reset the current level (if implemented)
+- Esc: Quit the game
+
+
 ## Screenshots
 
 ![Image](https://github.com/user-attachments/assets/d0cba9d6-5705-4d6d-b03a-2bfb0d0924e3)
