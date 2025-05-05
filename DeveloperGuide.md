@@ -6,7 +6,37 @@ This project is organized into several classes that all interact and combine int
   it is also required that you have box2d and SDL3 installed and properly pathed to to be able to run and complile the software.
 
 ## How to Contribute
-  Make a pull! the worst i can say is no do whatever you want to it. make sure to test and pull the current copy again before you commit, so code is not overridden.
+Getting Started
+1. Fork the Main Repository:
+  Fork the main repository into your GitHub account. This action creates a new repository in your account, where you'll be working from.
+
+2. Sync Your Repository:
+    If you've forked the repository earlier, it's important to keep it up to date. Follow these steps to sync your fork with the latest version:
+    
+    Configure the remote for your fork:
+    
+    git remote add upstream https://github.com/YourGitHubUsername/YourCourseRepo
+    Fetch any changes from the upstream:
+    
+    git fetch upstream
+    Checkout the local main branch of your fork:
+    
+    git checkout main
+    Merge changes from the upstream into your main branch:
+    
+    git merge upstream/main
+    Making Changes
+
+3. Commit and Push:
+    Commit your changes to your local repository:
+    
+    git commit -m "Your descriptive commit message"
+    Push your changes to your online repository:
+    
+    git push origin main
+5. Create a Pull Request:
+  Submit a pull request to submit your work for review.
+
 
 ## Code Standards
   use CamelCase for all varibles, and all global varibles must be capitalized. use specific names, and when possible as local as possible to prevent any overlap.
