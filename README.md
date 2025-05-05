@@ -13,6 +13,12 @@ make
 ./SlidingGame
 ```
 
+Controls
+- Arrow keys / WASD: Move player
+- Mouse (click + drag): Move draggable blocks
+- R: Restart current level
+- Esc: Quit game
+
 ## About
 
 - Modern C++ game prototype
@@ -34,3 +40,8 @@ See the [User Manual](Usermanual.md) for usage instructions, screenshots, and FA
 ## Preview
 
 ![Gameplay](https://github.com/user-attachments/assets/d0cba9d6-5705-4d6d-b03a-2bfb0d0924e3)
+
+## License
+This project is licensed under the MIT License, a permissive open-source
+license that allows reuse with attribution. See LICENSE for full
+details.
