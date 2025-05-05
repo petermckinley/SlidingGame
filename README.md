@@ -1,24 +1,36 @@
-SlidingGame – A C++ Sliding Puzzle Game
+# SlidingGame
 
-Short Description:
-SlidingGame is a C++ implementation of a classic sliding block puzzle. Players can move blocks within a confined space, aiming to reach a goal configuration. The project is structured using modern C++ standards and is intended as a hands-on educational tool or game prototype.
+SlidingGame is a C++ puzzle game that combines classic sliding block mechanics with real-time physics using SDL3 and Box2D.
 
-How to Download/Set Up the Project:
+## Quick Start
 
-Clone the repository:
-
-bash
-Copy
-Edit
+```bash
 git clone https://github.com/petermckinley/SlidingGame.git
 cd SlidingGame
-Compile the project using g++, CMake, or your preferred IDE.
-
-How to Run/Use the Project:
-After building:
-
-bash
-Copy
-Edit
+mkdir build && cd build
+cmake ..
+make
 ./SlidingGame
-The executable will start the game loop, and you'll interact using keyboard inputs
+```
+
+## About
+
+- Modern C++ game prototype
+- Physics-based sliding logic (Box2D)
+- Built with SDL3
+- Educational, extendable, and open source
+
+## More Info
+
+See the [User Manual](docs/UserManual.md) for usage instructions, screenshots, and FAQ.
+
+## Requirements
+
+- C++17 compiler
+- CMake
+- SDL3
+- Box2D
+
+## Preview
+
+![Gameplay](https://github.com/user-attachments/assets/d0cba9d6-5705-4d6d-b03a-2bfb0d0924e3)
