@@ -17,4 +17,5 @@ This project is organized into several classes that all interact and combine int
   - game needs better level flow, need to improve the generalizability of level end check
   - levels need to be build more extensively, and many more levels need to be built
   - volume and settings need to be implemented, and a way to pause the game loop as well
-  these are just a few big picture things at the moment, but there are a couple smaller images you will surely run into if you delve into this.
+
+these are just a few big picture things at the moment, but there are a couple smaller images you will surely run into if you delve into this.
