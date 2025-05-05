@@ -24,6 +24,7 @@ Objective: Rearrange blocks to reach a specific end-state.
 
 Screenshots:
 ![Image](https://github.com/user-attachments/assets/d0cba9d6-5705-4d6d-b03a-2bfb0d0924e3)
+![Image](https://github.com/user-attachments/assets/5851f471-7fb3-4bea-8aa1-80e3ef639035)
 
 Features:
 
