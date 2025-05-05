@@ -81,7 +81,7 @@
 A: Make sure SDL3 and Box2D are installed and correctly configured. Ensure all hardcoded folders and files are present.
 
 **Q: How do I reset the puzzle?**
-A: Restart the application or press the reset key (if implemented in the code).
+A: Restart the application or press the reset key (if implemented yet).
 
 **Q: Can I add new puzzles?**
-A: Yes, either by modifying configuration files (if supported) or by hardcoding new layouts directly into the `src/` code. Level system is currently in development.
+A: Yes, either by modifying configuration files or by hardcoding new layouts directly into the `src/` code. Level system is currently in development.
