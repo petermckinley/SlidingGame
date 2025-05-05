@@ -13,16 +13,17 @@ mkdir build
 cd build
 cmake ..
 make
+
+make sure to have the downloaded folders in the correct locaitons, the majority of values are hardcoded in and need to be set up specificlly. you also need to ensure that Box2d is properly installed and in the correct file location
+
+
 Basic Usage:
-
 Launch the game.
-
 Use keyboard inputs to move blocks.
-
 Objective: Rearrange blocks to reach a specific end-state.
 
-Screenshots, Workflows or Demo Link:
-Screenshots not provided in repo. Add screenshots of gameplay here.
+Screenshots:
+
 
 Features:
 
