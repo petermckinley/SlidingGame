@@ -1,0 +1,39 @@
+Installation / Setup Guide:
+
+Ensure a C++ compiler (GCC, Clang, MSVC) is installed.
+
+Install SDL3
+
+Build using your terminal or IDE. Example:
+
+bash
+Copy
+Edit
+mkdir build
+cd build
+cmake ..
+make
+Basic Usage:
+
+Launch the game.
+
+Use keyboard inputs to move blocks.
+
+Objective: Rearrange blocks to reach a specific end-state.
+
+Screenshots, Workflows or Demo Link:
+Screenshots not provided in repo. Add screenshots of gameplay here.
+
+Features:
+
+Classic sliding puzzle mechanics.
+
+Configurable block layout (in code or level file).
+
+Collision handling and win condition checking.
+
+FAQ:
+
+Game doesn’t start: Ensure SDL2 (or other dependencies) is correctly installed, make sure system is compatible
+How do I reset the puzzle?:	Restart the game or press the reset key
+Can I add new puzzles?:	Yes, by editing configuration files or hardcoding layouts in src/, in current development
