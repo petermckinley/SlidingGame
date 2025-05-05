@@ -1,9 +1,16 @@
 ##  Project Structure
-This project is organized into several classes that all interact and combine into the main executable. the Entity, DraggableEntity, and StaticEntity are all implementaitons of a block that can move and interact with the gameworld, and have their corresponding .hpp and .cpp files in include and source respectivly. the inlcude folder also has the rest of the .hpp class files, while the src has the corresponding .cpp file and also the images the project uses. the project has a .vscode folder where all of the json make files are stored, and finally a build folder where the final executable is deposited.
+  This project is organized into several core classes that interact to form the main executable. The primary game elements include Entity, DraggableEntity, and StaticEntity—each representing a type of block that can move or interact with the game world. Each of these classes has its own .hpp and .cpp files, located in the include/ and src/ folders respectively. 
+  
+  The include/ folder contains all header (.hpp) files for the classes used in the project. The src/ folder holds the corresponding implementation (.cpp) files, as well as any game assets such as images. Make sure these images remain in this location, as paths are hardcoded relative to this directory. 
+  
+  A .vscode/ folder is included for users of Visual Studio Code. It contains JSON configuration files (such as tasks.json and launch.json) that define how the project is built and run in that environment. 
+  
+  Finally, the build/ folder is where the compiled executable and any build artifacts are placed. This folder can typically be cleaned or regenerated without affecting source code.
 
 ## Setup For Development
-  the general recommended setup is an ide with good file management settings, i personally have used VScode for the entirety of the project but VS or any other cpp compatible ide should work. windows is the recommended use and development environment because all of the file paths are for windows.
-  it is also required that you have box2d and SDL3 installed and properly pathed to to be able to run and complile the software.
+  The general recommended setup is an IDE with strong file and project management capabilities. I personally used VSCode throughout the entire project, but any C++-compatible IDE, such as Visual Studio or CLion, should work just as well. Windows is the preferred development environment since all file paths and build configurations are set up for Windows by default. 
+  
+  To build and run the project, it is required that both Box2D and SDL3 are installed and correctly configured. This includes setting up include paths, library paths, and any necessary runtime dependencies in your IDE or build system. Make sure your compiler (e.g., g++, MSVC) is compatible with C++17 or later. If you're using a different OS, additional configuration may be needed and is not officially supported.
 
 ## How to Contribute
 Getting Started
@@ -39,7 +46,15 @@ Getting Started
 
 
 ## Code Standards
-  use CamelCase for all varibles, and all global varibles must be capitalized. use specific names, and when possible as local as possible to prevent any overlap.
+  All code in the repository should follow a consistent and readable style. Use CamelCase for all variables. Global variables must be fully capitalized to distinguish them clearly. Choose variable names that are specific and descriptive, and limit their scope to the most local context possible to avoid conflicts.
+
+  Function names should also use CamelCase, while class names should follow PascalCase (starting with a capital letter). Organize code logically by grouping related functions and classes together. Keep each file focused on a single purpose, and use folders to separate assignments or modules.
+
+  Write concise comments that explain non-obvious logic. Include a docstring at the top of each script and for each function to describe its purpose and usage. Comments should clarify what the code is doing without restating the obvious.
+
+  Use consistent formatting: 4 spaces for indentation, avoid tabs, and limit lines to a maximum of 82 characters. Leave a blank line between functions and two blank lines between classes to improve readability.
+
+  Write commit messages in the present tense, summarizing what was changed and why. Keep messages clear and concise to support effective version tracking and collaboration.
 
 ## Known Limitations
   At this point this project is far from complete, but here is a short list of the biggest current issues and a even briefer how to fix them.
