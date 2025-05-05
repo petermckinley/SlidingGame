@@ -22,7 +22,7 @@ make
 
 ## More Info
 
-See the [User Manual](UserManual.md) for usage instructions, screenshots, and FAQ.
+See the [User Manual](Usermanual.md) for usage instructions, screenshots, and FAQ.
 
 ## Requirements
 
